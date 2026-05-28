@@ -7,18 +7,37 @@ namespace Personal_Sitios.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var idUsuario = context.HttpContext.Session.GetInt32("IdUsuario");
+            var idUsuario =
+                context.HttpContext.Session.GetInt32("IdUsuario");
 
             if (idUsuario == null)
             {
-                var controller = context.Controller as Controller;
+                var controller =
+                    context.Controller as Controller;
+
+                bool teniaSesion =
+                    context.HttpContext.Request.Cookies.ContainsKey(
+                        "SesionIniciada"
+                    );
 
                 if (controller != null)
                 {
-                    controller.TempData["Mensaje"] = "Por favor inicie sesión para utilizar el sistema";
+                    if (teniaSesion)
+                    {
+                        controller.TempData["Mensaje"] =
+                            "La sesión ha expirado. Por favor inicie sesión nuevamente.";
+                    }
+                    else
+                    {
+                        controller.TempData["Mensaje"] =
+                            "Por favor inicie sesión para utilizar el sistema";
+                    }
                 }
 
-                context.Result = new RedirectToActionResult("Index", "Login", null);
+                context.Result =
+                    new RedirectToActionResult("Index", "Login", null);
+
+                return;
             }
 
             base.OnActionExecuting(context);

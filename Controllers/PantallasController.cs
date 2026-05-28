@@ -8,6 +8,7 @@ using Personal_Sitios.ViewModels;
 namespace Personal_Sitios.Controllers
 {
     [SessionAuthorize]
+    [ServiceFilter(typeof(PermisoAuthorizeAttribute))]
     [Route("Seguridad/Modulos")]
     public class PantallasController : Controller
     {

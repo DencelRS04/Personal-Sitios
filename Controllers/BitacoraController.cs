@@ -7,6 +7,7 @@ using Personal_Sitios.ViewModels;
 namespace Personal_Sitios.Controllers
 {
     [SessionAuthorize]
+    [ServiceFilter(typeof(PermisoAuthorizeAttribute))]
     [Route("General/Bitacora")]
     public class BitacoraController : Controller
     {

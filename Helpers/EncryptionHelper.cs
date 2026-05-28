@@ -61,7 +61,8 @@ namespace Personal_Sitios.Helpers
 
             try
             {
-                string textoDesencriptado = Desencriptar(textoEncriptado);
+                string textoDesencriptado =
+                    Desencriptar(textoEncriptado);
 
                 return textoPlano == textoDesencriptado;
             }
@@ -82,22 +83,28 @@ namespace Personal_Sitios.Helpers
 
             byte[] key = Encoding.UTF8.GetBytes(keyString);
 
-            string limpio = textoEncriptado.Replace("AESGCM:", "");
+            string limpio =
+                textoEncriptado.Replace("AESGCM:", "");
 
-            string[] partes = limpio.Split(':');
+            string[] partes =
+                limpio.Split(':');
 
             if (partes.Length != 3)
             {
                 throw new Exception("Formato de contraseña encriptada inválido.");
             }
 
-            byte[] nonce = Convert.FromBase64String(partes[0]);
+            byte[] nonce =
+                Convert.FromBase64String(partes[0]);
 
-            byte[] tag = Convert.FromBase64String(partes[1]);
+            byte[] tag =
+                Convert.FromBase64String(partes[1]);
 
-            byte[] cipherText = Convert.FromBase64String(partes[2]);
+            byte[] cipherText =
+                Convert.FromBase64String(partes[2]);
 
-            byte[] textoPlano = new byte[cipherText.Length];
+            byte[] textoPlano =
+                new byte[cipherText.Length];
 
             using var aes = new AesGcm(key, 16);
 
