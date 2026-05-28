@@ -74,14 +74,11 @@ namespace Personal_Sitios.Controllers
             var pantalla = new Pantalla
             {
                 nombre = modelo.nombre,
-
-                // Datos técnicos internos para que la pantalla pueda existir en el menú.
-                // No se muestran en la vista porque la HU solo solicita nombre y roles.
                 modulo = "Seguridad",
                 ruta = "#",
                 icono = "fa-window-maximize",
                 orden_menu = 99,
-                visible_menu = true,
+                visible_menu = false,
                 activo = true
             };
 
@@ -142,7 +139,9 @@ namespace Personal_Sitios.Controllers
             int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
 
             var pantallaAnterior = _repository.ObtenerPorId(id);
-            var rolesAnteriores = _repository.ObtenerRolesDePantalla(id);
+
+            var rolesAnteriores =
+                _repository.ObtenerRolesDePantalla(id);
 
             var pantallaActual = new Pantalla
             {
@@ -160,12 +159,14 @@ namespace Personal_Sitios.Controllers
                 "Pantalla",
                 new
                 {
-                    pantallaAnterior,
+                    pantallaAnterior.id_pantalla,
+                    pantallaAnterior.nombre,
                     roles = rolesAnteriores
                 },
                 new
                 {
-                    pantallaActual,
+                    pantallaActual.id_pantalla,
+                    pantallaActual.nombre,
                     roles = modelo.RolesSeleccionados
                 }
             );
@@ -200,7 +201,11 @@ namespace Personal_Sitios.Controllers
             _bitacoraService.RegistrarDelete(
                 idUsuario,
                 "Pantalla",
-                pantalla
+                new
+                {
+                    pantalla.id_pantalla,
+                    pantalla.nombre
+                }
             );
 
             TempData["Exito"] = "Pantalla eliminada correctamente.";

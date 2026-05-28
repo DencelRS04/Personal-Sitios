@@ -4,10 +4,10 @@ namespace Personal_Sitios.ViewModels
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "Debe ingresar el usuario")]
+        [Required(ErrorMessage = "Usuario y/o contraseña incorrectos.")]
         public string Usuario { get; set; }
 
-        [Required(ErrorMessage = "Debe ingresar la contraseña")]
+        [Required(ErrorMessage = "Usuario y/o contraseña incorrectos.")]
         public string Password { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Personal_Sitios.Helpers;
 using Personal_Sitios.Repositories;
 using Personal_Sitios.ViewModels;
-using Personal_Sitios.Helpers;
 
 namespace Personal_Sitios.Controllers
 {
@@ -33,6 +33,8 @@ namespace Personal_Sitios.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.Error = "Usuario y/o contraseña incorrectos.";
+
                 return View(model);
             }
 
@@ -41,24 +43,30 @@ namespace Personal_Sitios.Controllers
             if (usuario == null)
             {
                 ViewBag.Error = "Usuario y/o contraseña incorrectos.";
+
                 return View(model);
             }
 
             if (usuario.estado == "BLOQUEADO")
             {
                 ViewBag.Error = "El usuario se encuentra bloqueado.";
+
                 return View(model);
             }
 
             if (usuario.estado == "INACTIVO")
             {
                 ViewBag.Error = "El usuario se encuentra inactivo.";
+
                 return View(model);
             }
 
             bool passwordCorrecto =
-                _encryptionHelper.Verificar(model.Password, usuario.password_hash);
-            
+                _encryptionHelper.Verificar(
+                    model.Password,
+                    usuario.password_hash
+                );
+
             if (!passwordCorrecto)
             {
                 _repository.AumentarIntentos(usuario.id_usuario);
@@ -68,11 +76,12 @@ namespace Personal_Sitios.Controllers
                 if (intentosActuales >= 3)
                 {
                     _repository.BloquearUsuario(usuario.id_usuario);
+
                     ViewBag.Error = "El usuario se bloqueó por fallar 3 intentos.";
                 }
                 else
                 {
-                    ViewBag.Error = $"Usuario y/o contraseña incorrectos. Intento {intentosActuales} de 3.";
+                    ViewBag.Error = "Usuario y/o contraseña incorrectos.";
                 }
 
                 return View(model);
@@ -80,11 +89,25 @@ namespace Personal_Sitios.Controllers
 
             _repository.ReiniciarIntentos(usuario.id_usuario);
 
-            HttpContext.Session.SetInt32("IdUsuario", usuario.id_usuario);
-            HttpContext.Session.SetString("Usuario", usuario.usuario);
-            HttpContext.Session.SetString("NombreCompleto", usuario.nombre_completo);
+            HttpContext.Session.SetInt32(
+                "IdUsuario",
+                usuario.id_usuario
+            );
 
-            return RedirectToAction("Index", "Home");
+            HttpContext.Session.SetString(
+                "Usuario",
+                usuario.usuario
+            );
+
+            HttpContext.Session.SetString(
+                "NombreCompleto",
+                usuario.nombre_completo
+            );
+
+            return RedirectToAction(
+                "Index",
+                "Home"
+            );
         }
 
         public IActionResult Logout()
@@ -93,7 +116,10 @@ namespace Personal_Sitios.Controllers
 
             TempData["Mensaje"] = "Sesión cerrada correctamente.";
 
-            return RedirectToAction("Index", "Login");
+            return RedirectToAction(
+                "Index",
+                "Login"
+            );
         }
     }
 }

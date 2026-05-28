@@ -148,7 +148,9 @@ namespace Personal_Sitios.Controllers
             int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
 
             var usuarioAnterior = _repository.ObtenerPorId(id);
-            var rolesAnteriores = _repository.ObtenerRolesDelUsuario(id);
+
+            var rolesAnteriores =
+                _repository.ObtenerRolesDelUsuario(id);
 
             var usuarioActual = new Usuario
             {
@@ -245,10 +247,18 @@ namespace Personal_Sitios.Controllers
                 return RedirectToAction("Index");
             }
 
+            if (usuario.estado == "BLOQUEADO")
+            {
+                TempData["Error"] =
+                    "No se puede activar o inactivar un usuario bloqueado.";
+
+                return RedirectToAction("Index");
+            }
+
             string nuevoEstado =
                 usuario.estado == "ACTIVO"
-                ? "INACTIVO"
-                : "ACTIVO";
+                    ? "INACTIVO"
+                    : "ACTIVO";
 
             _repository.CambiarEstado(
                 id,
