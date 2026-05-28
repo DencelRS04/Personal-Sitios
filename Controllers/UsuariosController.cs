@@ -9,6 +9,7 @@ using Personal_Sitios.ViewModels;
 namespace Personal_Sitios.Controllers
 {
     [SessionAuthorize]
+    [ServiceFilter(typeof(PermisoAuthorizeAttribute))]
     [Route("Seguridad/Usuarios")]
     public class UsuariosController : Controller
     {
@@ -31,7 +32,8 @@ namespace Personal_Sitios.Controllers
         {
             int cantidadPorPagina = 10;
 
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            int? idUsuario =
+                HttpContext.Session.GetInt32("IdUsuario");
 
             var modelo = new UsuariosListaViewModel
             {
@@ -67,28 +69,41 @@ namespace Personal_Sitios.Controllers
         [HttpPost("Crear")]
         public IActionResult Crear(UsuarioViewModel modelo)
         {
+            if (string.IsNullOrWhiteSpace(modelo.password))
+            {
+                ModelState.AddModelError(
+                    "password",
+                    "La contraseña es obligatoria"
+                );
+            }
+
             if (!ModelState.IsValid)
             {
-                modelo.RolesDisponibles = _repository.ListarRoles();
+                modelo.RolesDisponibles =
+                    _repository.ListarRoles();
 
                 return View(modelo);
             }
 
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            int? idUsuario =
+                HttpContext.Session.GetInt32("IdUsuario");
 
             var usuario = new Usuario
             {
                 usuario = modelo.usuario,
                 nombre_completo = modelo.nombre_completo,
                 correo = modelo.correo,
-                password_hash = _encryptionHelper.Encriptar(modelo.password),
+                password_hash = _encryptionHelper.Encriptar(
+                    modelo.password
+                ),
                 estado = modelo.estado
             };
 
-            int idNuevoUsuario = _repository.Crear(
-                usuario,
-                modelo.RolesSeleccionados
-            );
+            int idNuevoUsuario =
+                _repository.Crear(
+                    usuario,
+                    modelo.RolesSeleccionados
+                );
 
             usuario.id_usuario = idNuevoUsuario;
 
@@ -106,7 +121,8 @@ namespace Personal_Sitios.Controllers
                 }
             );
 
-            TempData["Exito"] = "Usuario creado correctamente.";
+            TempData["Exito"] =
+                "Usuario creado correctamente.";
 
             return RedirectToAction("Index");
         }
@@ -114,7 +130,8 @@ namespace Personal_Sitios.Controllers
         [HttpGet("Editar/{id}")]
         public IActionResult Editar(int id)
         {
-            var usuario = _repository.ObtenerPorId(id);
+            var usuario =
+                _repository.ObtenerPorId(id);
 
             if (usuario == null)
             {
@@ -129,7 +146,8 @@ namespace Personal_Sitios.Controllers
                 correo = usuario.correo,
                 estado = usuario.estado,
                 RolesDisponibles = _repository.ListarRoles(),
-                RolesSeleccionados = _repository.ObtenerRolesDelUsuario(id)
+                RolesSeleccionados =
+                    _repository.ObtenerRolesDelUsuario(id)
             };
 
             return View(modelo);
@@ -140,17 +158,36 @@ namespace Personal_Sitios.Controllers
         {
             if (!ModelState.IsValid)
             {
-                modelo.RolesDisponibles = _repository.ListarRoles();
+                modelo.RolesDisponibles =
+                    _repository.ListarRoles();
 
                 return View(modelo);
             }
 
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            int? idUsuario =
+                HttpContext.Session.GetInt32("IdUsuario");
 
-            var usuarioAnterior = _repository.ObtenerPorId(id);
+            var usuarioAnterior =
+                _repository.ObtenerPorId(id);
+
+            if (usuarioAnterior == null)
+            {
+                return RedirectToAction("Index");
+            }
 
             var rolesAnteriores =
                 _repository.ObtenerRolesDelUsuario(id);
+
+            string passwordFinal =
+                usuarioAnterior.password_hash;
+
+            if (!string.IsNullOrWhiteSpace(modelo.password))
+            {
+                passwordFinal =
+                    _encryptionHelper.Encriptar(
+                        modelo.password
+                    );
+            }
 
             var usuarioActual = new Usuario
             {
@@ -158,7 +195,7 @@ namespace Personal_Sitios.Controllers
                 usuario = modelo.usuario,
                 nombre_completo = modelo.nombre_completo,
                 correo = modelo.correo,
-                password_hash = _encryptionHelper.Encriptar(modelo.password),
+                password_hash = passwordFinal,
                 estado = modelo.estado
             };
 
@@ -190,7 +227,8 @@ namespace Personal_Sitios.Controllers
                 }
             );
 
-            TempData["Exito"] = "Usuario actualizado correctamente.";
+            TempData["Exito"] =
+                "Usuario actualizado correctamente.";
 
             return RedirectToAction("Index");
         }
@@ -198,9 +236,11 @@ namespace Personal_Sitios.Controllers
         [HttpPost("Eliminar/{id}")]
         public IActionResult Eliminar(int id)
         {
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            int? idUsuario =
+                HttpContext.Session.GetInt32("IdUsuario");
 
-            var usuario = _repository.ObtenerPorId(id);
+            var usuario =
+                _repository.ObtenerPorId(id);
 
             if (usuario == null)
             {
@@ -230,7 +270,8 @@ namespace Personal_Sitios.Controllers
                 }
             );
 
-            TempData["Exito"] = "Usuario eliminado correctamente.";
+            TempData["Exito"] =
+                "Usuario eliminado correctamente.";
 
             return RedirectToAction("Index");
         }
@@ -238,9 +279,11 @@ namespace Personal_Sitios.Controllers
         [HttpPost("CambiarEstado/{id}")]
         public IActionResult CambiarEstado(int id)
         {
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            int? idUsuario =
+                HttpContext.Session.GetInt32("IdUsuario");
 
-            var usuario = _repository.ObtenerPorId(id);
+            var usuario =
+                _repository.ObtenerPorId(id);
 
             if (usuario == null)
             {
@@ -286,7 +329,8 @@ namespace Personal_Sitios.Controllers
                 }
             );
 
-            TempData["Exito"] = "Estado del usuario actualizado correctamente.";
+            TempData["Exito"] =
+                "Estado del usuario actualizado correctamente.";
 
             return RedirectToAction("Index");
         }

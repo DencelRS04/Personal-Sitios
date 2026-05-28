@@ -17,12 +17,11 @@ namespace Personal_Sitios.ViewModels
         [EmailAddress(ErrorMessage = "El correo no tiene un formato válido")]
         public string correo { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es obligatoria")]
         [RegularExpression(
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$",
             ErrorMessage = "La contraseña debe tener mínimo 8 caracteres, mayúsculas, minúsculas, números y caracteres especiales"
         )]
-        public string password { get; set; }
+        public string? password { get; set; }
 
         [Required(ErrorMessage = "El estado es obligatorio")]
         public string estado { get; set; }

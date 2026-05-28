@@ -1,11 +1,17 @@
 using Personal_Sitios.Data;
+using Personal_Sitios.Filters;
+using Personal_Sitios.Helpers;
 using Personal_Sitios.Repositories;
 using Personal_Sitios.Services;
-using Personal_Sitios.Helpers;
-
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<BitacoraExceptionFilter>();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<BitacoraExceptionFilter>();
+});
 
 builder.Services.AddSingleton<DbContext>();
 
@@ -14,10 +20,12 @@ builder.Services.AddScoped<MenuRepository>();
 builder.Services.AddScoped<BitacoraRepository>();
 builder.Services.AddScoped<RolesRepository>();
 builder.Services.AddScoped<PantallasRepository>();
-builder.Services.AddScoped<EncryptionHelper>();
 builder.Services.AddScoped<UsuariosRepository>();
+builder.Services.AddScoped<PermisosRepository>();
 
 builder.Services.AddScoped<BitacoraService>();
+builder.Services.AddScoped<EncryptionHelper>();
+builder.Services.AddScoped<PermisoAuthorizeAttribute>();
 
 builder.Services.AddSession(options =>
 {
@@ -25,12 +33,12 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-
     app.UseHsts();
 }
 

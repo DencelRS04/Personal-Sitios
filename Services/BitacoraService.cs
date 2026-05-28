@@ -29,13 +29,16 @@ namespace Personal_Sitios.Services
             string entidad,
             object datosNuevos)
         {
+            string jsonNuevo =
+                JsonSerializer.Serialize(datosNuevos);
+
             _repository.Registrar(
                 idUsuario,
                 "INSERT",
                 entidad,
-                $"El usuario registra {entidad}",
+                $"El usuario registra {entidad}. Datos nuevos: {jsonNuevo}",
                 null,
-                JsonSerializer.Serialize(datosNuevos)
+                jsonNuevo
             );
         }
 
@@ -45,13 +48,19 @@ namespace Personal_Sitios.Services
             object datosAnteriores,
             object datosNuevos)
         {
+            string jsonAnterior =
+                JsonSerializer.Serialize(datosAnteriores);
+
+            string jsonNuevo =
+                JsonSerializer.Serialize(datosNuevos);
+
             _repository.Registrar(
                 idUsuario,
                 "UPDATE",
                 entidad,
-                $"El usuario actualiza {entidad}",
-                JsonSerializer.Serialize(datosAnteriores),
-                JsonSerializer.Serialize(datosNuevos)
+                $"El usuario actualiza {entidad}. Datos anteriores: {jsonAnterior}. Datos nuevos: {jsonNuevo}",
+                jsonAnterior,
+                jsonNuevo
             );
         }
 
@@ -60,12 +69,15 @@ namespace Personal_Sitios.Services
             string entidad,
             object datosEliminados)
         {
+            string jsonEliminado =
+                JsonSerializer.Serialize(datosEliminados);
+
             _repository.Registrar(
                 idUsuario,
                 "DELETE",
                 entidad,
-                $"El usuario elimina {entidad}",
-                JsonSerializer.Serialize(datosEliminados),
+                $"El usuario elimina {entidad}. Datos eliminados: {jsonEliminado}",
+                jsonEliminado,
                 null
             );
         }
@@ -79,7 +91,7 @@ namespace Personal_Sitios.Services
                 idUsuario,
                 "ERROR",
                 entidad,
-                error
+                $"Error técnico en {entidad}: {error}"
             );
         }
     }
