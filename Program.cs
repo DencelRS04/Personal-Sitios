@@ -1,13 +1,23 @@
 using Personal_Sitios.Data;
 using Personal_Sitios.Repositories;
+using Personal_Sitios.Services;
+using Personal_Sitios.Helpers;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<DbContext>();
 
 builder.Services.AddScoped<LoginRepository>();
+builder.Services.AddScoped<MenuRepository>();
+builder.Services.AddScoped<BitacoraRepository>();
+builder.Services.AddScoped<RolesRepository>();
+builder.Services.AddScoped<PantallasRepository>();
+builder.Services.AddScoped<EncryptionHelper>();
+builder.Services.AddScoped<UsuariosRepository>();
+
+builder.Services.AddScoped<BitacoraService>();
 
 builder.Services.AddSession(options =>
 {

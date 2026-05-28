@@ -1,0 +1,140 @@
+﻿@model Personal_Sitios.ViewModels.BitacoraFiltroViewModel
+
+@{
+    ViewData["Title"] = "Bitácora";
+    int totalPaginas = (int)Math.Ceiling((double)Model.TotalRegistros / Model.CantidadPorPagina);
+}
+
+<div class="card shadow border-0">
+
+    <div class="card-header bg-white">
+        <h4 class="mb-0">
+            <i class="bi bi-journal-text"></i>
+            Bitácora del Sistema
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="row g-3 mb-4">
+
+            <div class="col-md-3">
+                <label class="form-label">Usuario</label>
+                <input type="text"
+                       name="usuarioFiltro"
+                       value="@Model.UsuarioFiltro"
+                       class="form-control"
+                       placeholder="Buscar usuario" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Descripción</label>
+                <input type="text"
+                       name="descripcionFiltro"
+                       value="@Model.DescripcionFiltro"
+                       class="form-control"
+                       placeholder="Buscar descripción" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Orden</label>
+                <select name="orden" class="form-select">
+                    <option value="fecha_desc" selected="@(Model.Orden == "fecha_desc")">
+                        Fecha descendente
+                    </option>
+
+                    <option value="fecha_asc" selected="@(Model.Orden == "fecha_asc")">
+                        Fecha ascendente
+                    </option>
+
+                    <option value="usuario_asc" selected="@(Model.Orden == "usuario_asc")">
+                        Usuario A-Z
+                    </option>
+
+                    <option value="usuario_desc" selected="@(Model.Orden == "usuario_desc")">
+                        Usuario Z-A
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i>
+                    Buscar
+                </button>
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Usuario</th>
+                        <th>Tipo</th>
+                        <th>Entidad</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Bitacoras.Any())
+                    {
+                        foreach (var item in Model.Bitacoras)
+                        {
+                            <tr>
+                                <td>@item.fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.usuario</td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        @item.tipo
+                                    </span>
+                                </td>
+                                <td>@item.entidad</td>
+                                <td>@item.descripcion</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                No se encontraron registros.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+        @if (totalPaginas > 1)
+        {
+            <nav>
+                <ul class="pagination justify-content-center">
+
+                    @for (int i = 1; i <= totalPaginas; i++)
+                    {
+                        <li class="page-item @(i == Model.Pagina ? "active" : "")">
+                            <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pagina="@i"
+                                   asp-route-usuarioFiltro="@Model.UsuarioFiltro"
+                                   asp-route-descripcionFiltro="@Model.DescripcionFiltro"
+                                   asp-route-orden="@Model.Orden">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </nav>
+        }
+
+    </div>
+
+</div>

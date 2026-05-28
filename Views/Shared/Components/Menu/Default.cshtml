@@ -1,0 +1,12 @@
+﻿@model List<Personal_Sitios.Models.Pantalla>
+
+@foreach (var item in Model)
+{
+    <li class="nav-item">
+        <a class="nav-link"
+               href="@item.ruta">
+            <i class="fas @item.icono"></i>
+            @item.nombre
+        </a>
+    </li>
+}

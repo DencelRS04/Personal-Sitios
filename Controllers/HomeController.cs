@@ -1,32 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
-using Personal_Sitios.Models;
-using System.Diagnostics;
+using Personal_Sitios.Filters;
 
 namespace Personal_Sitios.Controllers
 {
+    [SessionAuthorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
-            return View();
-        }
+            ViewBag.NombreCompleto =
+                HttpContext.Session.GetString("NombreCompleto");
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            ViewBag.Usuario =
+                HttpContext.Session.GetString("Usuario");
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }
